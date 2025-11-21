@@ -27,6 +27,9 @@ target_link_libraries(picow_http_client
         example_lwip_http_util
         pico_stdlib
         )
+# Enable USB serial output, disable UART output
+pico_enable_stdio_usb(picow_http_client 1)
+pico_enable_stdio_uart(picow_http_client 0)
 pico_add_extra_outputs(picow_http_client)
 
 add_executable(picow_http_client_verify

@@ -16,6 +16,9 @@ target_link_libraries(picow_tls_client_background
         pico_mbedtls
         pico_stdlib
         )
+# Enable USB serial output, disable UART output
+pico_enable_stdio_usb(picow_tls_client_background 1)
+pico_enable_stdio_uart(picow_tls_client_background 0)
 pico_add_extra_outputs(picow_tls_client_background)
 
 add_executable(picow_tls_client_poll
@@ -36,6 +39,9 @@ target_link_libraries(picow_tls_client_poll
         pico_mbedtls
         pico_stdlib
         )
+# Enable USB serial output, disable UART output
+pico_enable_stdio_usb(picow_tls_client_poll 1)
+pico_enable_stdio_uart(picow_tls_client_poll 0)
 pico_add_extra_outputs(picow_tls_client_poll)
 
 # This version verifies the tls connection with a certificate

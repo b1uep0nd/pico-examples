@@ -15,6 +15,9 @@ target_link_libraries(picow_access_point_background
         pico_cyw43_arch_lwip_threadsafe_background
         pico_stdlib
         )
+# Enable USB serial output, disable UART output
+pico_enable_stdio_usb(picow_access_point_background 1)
+pico_enable_stdio_uart(picow_access_point_background 0)
 # You can change the address below to change the address of the access point
 pico_configure_ip4_address(picow_access_point_background PRIVATE
         CYW43_DEFAULT_IP_AP_ADDRESS 192.168.4.1
