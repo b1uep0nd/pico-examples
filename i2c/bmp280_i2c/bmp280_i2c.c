@@ -10,6 +10,12 @@
 #include "pico/binary_info.h"
 #include "pico/stdlib.h"
 
+// Pico W devices use a GPIO on the WIFI chip for the LED,
+// so when building for Pico W, CYW43_WL_GPIO_LED_PIN will be defined
+#ifdef CYW43_WL_GPIO_LED_PIN
+#include "pico/cyw43_arch.h"
+#endif
+
  /* Example code to talk to a BMP280 temperature and pressure sensor
 
     NOTE: Ensure the device is capable of being driven at 3.3v NOT 5v. The Pico
@@ -208,6 +214,33 @@ void bmp280_get_calib_params(struct bmp280_calib_param* params) {
 
 #endif
 
+// Perform LED initialisation
+int pico_led_init(void) {
+#if defined(PICO_DEFAULT_LED_PIN)
+    // A device like Pico that uses a GPIO for the LED will define PICO_DEFAULT_LED_PIN
+    // so we can use normal GPIO functionality to turn the led on and off
+    gpio_init(PICO_DEFAULT_LED_PIN);
+    gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
+    return 0;
+#elif defined(CYW43_WL_GPIO_LED_PIN)
+    // For Pico W devices we need to initialise the driver etc
+    return cyw43_arch_init();
+#else
+    return 0;  // No LED available
+#endif
+}
+
+// Turn the led on or off
+void pico_set_led(bool led_on) {
+#if defined(PICO_DEFAULT_LED_PIN)
+    // Just set the GPIO on or off
+    gpio_put(PICO_DEFAULT_LED_PIN, led_on);
+#elif defined(CYW43_WL_GPIO_LED_PIN)
+    // Ask the wifi "driver" to set the GPIO on or off
+    cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, led_on);
+#endif
+}
+
 int main() {
     stdio_init_all();
 
@@ -216,11 +249,23 @@ int main() {
         puts("Default I2C pins were not defined");
     return 0;
 #else
+    // Initialize LED
+    int rc = pico_led_init();
+    if (rc != 0) {
+        printf("LED initialization failed!\n");
+    }
+    // Turn LED on to indicate program is running
+    pico_set_led(true);
+
+    // Wait a bit for serial connection to be established
+    sleep_ms(2000);
+
     // useful information for picotool
     bi_decl(bi_2pins_with_func(PICO_DEFAULT_I2C_SDA_PIN, PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C));
     bi_decl(bi_program_description("BMP280 I2C example for the Raspberry Pi Pico"));
 
     printf("Hello, BMP280! Reading temperaure and pressure values from sensor...\n");
+    printf("LED is ON - program is running!\n");
 
     // I2C is "open drain", pull ups to keep signal high when no data is being sent
     i2c_init(i2c_default, 100 * 1000);
@@ -240,12 +285,18 @@ int main() {
     int32_t raw_pressure;
 
     sleep_ms(250); // sleep so that data polling and register update don't collide
+    bool led_state = true;
     while (1) {
         bmp280_read_raw(&raw_temperature, &raw_pressure);
         int32_t temperature = bmp280_convert_temp(raw_temperature, &params);
         int32_t pressure = bmp280_convert_pressure(raw_pressure, raw_temperature, &params);
         printf("Pressure = %.3f kPa\n", pressure / 1000.f);
         printf("Temp. = %.2f C\n", temperature / 100.f);
+        
+        // Toggle LED to show activity
+        led_state = !led_state;
+        pico_set_led(led_state);
+        
         // poll every 500ms
         sleep_ms(500);
     }
