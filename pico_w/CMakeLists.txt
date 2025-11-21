@@ -19,6 +19,7 @@ if (PICO_CYW43_SUPPORTED) # set by PICO_BOARD=pico_w
         set(WIFI_PASSWORD "${WIFI_PASSWORD}" CACHE INTERNAL "WiFi password for examples")
 
         add_subdirectory(wifi)
+        add_subdirectory(adafruit_io_bmp280)
         if (NOT TARGET pico_btstack_base)
             message("Skipping Pico W Bluetooth examples as support is not available")
         else()
