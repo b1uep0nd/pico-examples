@@ -28,6 +28,12 @@ target_link_libraries(picow_http_client
         pico_stdlib
         hardware_rtc
         )
+# Increase heap size for mbedTLS TLS handshake
+# Default is typically 0x4000 (16KB), increase to 0x8000 (32KB) for HTTPS
+# This sets the heap size in the linker script to provide sufficient memory for TLS operations
+target_link_options(picow_http_client PRIVATE
+        -Wl,--defsym=__heap_size=0x8000
+        )
 # Enable USB serial output, disable UART output
 pico_enable_stdio_usb(picow_http_client 1)
 pico_enable_stdio_uart(picow_http_client 0)

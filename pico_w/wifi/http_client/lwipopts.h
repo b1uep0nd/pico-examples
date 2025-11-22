@@ -12,6 +12,11 @@
 #undef TCP_WND
 #define TCP_WND  16384
 
+/* Increase lwIP memory pool size for HTTPS/TLS operations
+   Default MEM_SIZE is 4000, increase to 8000 for better TLS handshake support */
+#undef MEM_SIZE
+#define MEM_SIZE  8000
+
 #define LWIP_ALTCP 1
 
 // If you don't want to use TLS (just a http request) you can avoid linking to mbedtls and remove the following
