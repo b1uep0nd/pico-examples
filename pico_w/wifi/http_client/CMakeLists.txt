@@ -26,6 +26,7 @@ target_link_libraries(picow_http_client
         pico_cyw43_arch_lwip_threadsafe_background
         example_lwip_http_util
         pico_stdlib
+        hardware_rtc
         )
 # Enable USB serial output, disable UART output
 pico_enable_stdio_usb(picow_http_client 1)
