@@ -1,0 +1,61 @@
+= Attaching an RFID-RC522 RFID reader/writer via SPI
+
+This example code shows how to interface the Raspberry Pi Pico W to an RFID-RC522 RFID reader/writer module via SPI at 3.3v.
+
+This example implements basic RFID card detection and reading functionality. It can detect MIFARE cards and read their UID (Unique Identifier).
+
+== Wiring information
+
+Wiring up the device requires 7 connections as follows:
+
+   * GPIO 4  -> MISO on RC522 board
+   * GPIO 5  -> SDA/NSS (Chip select) on RC522 board
+   * GPIO 6  -> SCK on RC522 board
+   * GPIO 7  -> MOSI on RC522 board
+   * GPIO 22 -> RST on RC522 board
+   * 3.3V    -> 3.3V on RC522 board
+   * GND     -> GND on RC522 board
+
+The example here uses SPI port 0. Power is supplied from the 3.3V pin.
+
+[NOTE]
+======
+Ensure the RC522 module is configured for 3.3V operation. Some modules have a jumper or switch to select between 3.3V and 5V operation.
+======
+
+== List of Files
+
+CMakeLists.txt:: CMake file to incorporate the example in to the examples build tree.
+rc522_spi.c:: The example code.
+
+== Bill of Materials
+
+.A list of materials required for the example
+[[RC522-bom-table]]
+[cols=3]
+|===
+| *Item* | *Quantity* | Details
+| Breadboard | 1 | generic part
+| Raspberry Pi Pico W | 1 | https://www.raspberrypi.com/products/raspberry-pi-pico/
+| RC522 RFID module| 1 | generic part
+| M/M Jumper wires | 7 | generic part
+| MIFARE card/tag | 1 | for testing
+|===
+
+== Usage
+
+After building and uploading the example, the program will:
+1. Initialize the RC522 module
+2. Display the RC522 version register
+3. Continuously scan for RFID cards
+4. When a card is detected, display its UID
+
+== Notes
+
+This is a basic implementation. For more advanced features such as:
+- Card authentication
+- Reading/writing data blocks
+- Different card types (ISO14443 Type A/B)
+
+Refer to the RC522 datasheet and MIFARE specifications for detailed information.
+
