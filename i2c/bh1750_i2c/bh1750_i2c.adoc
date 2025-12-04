@@ -1,0 +1,23 @@
+= BH1750 I2C Example
+
+BH1750 デジタル照度センサーと Raspberry Pi Pico/Pico W の I2C バスを接続する最小コードです。
+
+== 配線
+
+* `PICO_DEFAULT_I2C_SDA_PIN` (Pico: GP4/pin6) → BH1750 SDA
+* `PICO_DEFAULT_I2C_SCL_PIN` (Pico: GP5/pin7) → BH1750 SCL
+* 3V3 (pin36) → VCC
+* GND (pin38) → GND
+
+BH1750 の `ADDR` ピンは GND へ接続（アドレス 0x23）。
+
+== ビルドと実行
+
+```
+cd build
+cmake ..
+make bh1750_i2c
+```
+
+Pico を USB に接続後、得られる `bh1750_i2c.uf2` をドラッグ＆ドロップしてください。USB CDC から 0.5 秒周期で照度値が表示されます。
+
